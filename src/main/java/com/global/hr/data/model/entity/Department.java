@@ -1,12 +1,9 @@
 package com.global.hr.data.model.entity;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
+
+import java.util.List;
 
 @Entity
 @Table(name = "Departments")
@@ -18,21 +15,25 @@ public class Department {
 	@Column(name = "department_name", unique = true)
 	String name;
 
+	@OneToMany(mappedBy = "department", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<Employee> employees;
+
+
 ////   @OneToMany(mappedBy = "department")  //bidirectional
 //	List<Employee> employees;
 
 	public Department(Long id, String name) {
-		super();
+
 		this.id = id;
 		this.name = name;
 	}
 
 	public Department() {
-		super();
+
 	}
 
 	public Department(String name) {
-		super();
+
 		this.name = name;
 
 	}

@@ -21,8 +21,6 @@ import lombok.NoArgsConstructor;
 @Builder
 
 public class Employee {
-	
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "employee_id")
@@ -39,31 +37,17 @@ public class Employee {
 //	@JsonIgnore
 	private Department department;
 	
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name ="user_id")
-//	@JsonIgnore
-	private User user;
 
 	
 
 	public Employee() {
-		super();
 	}
 
-	public Employee(Long id, String firstName, String lastName, Double salary, Department department, User user) {
-		super();
-		this.id = id;
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.salary = salary;
-		this.department = department;
-		this.user = user;
-	}
 
 
 
 	public Employee(Long id, String firstName, String lastName, Double salary, Department department) {
-		super();
+
 		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -113,14 +97,6 @@ public class Employee {
 
 
 
-	public User getUser() {
-		return user;
-	}
 
-
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 }
