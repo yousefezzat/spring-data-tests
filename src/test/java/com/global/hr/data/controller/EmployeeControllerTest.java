@@ -6,6 +6,8 @@ import com.global.hr.data.model.entity.Department;
 import com.global.hr.data.model.entity.Employee;
 import com.global.hr.data.service.EmployeeService;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -15,11 +17,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 @WebMvcTest(EmployeeController.class)
+//@ExtendWith(MockitoExtension.class) --> already included in @WebMvcTest
 class  EmployeeControllerTest {
 
     @Autowired
@@ -34,7 +39,7 @@ class  EmployeeControllerTest {
 
 
     @Test
-    void testGetByIDSuccess() throws Exception {
+    void testGetByID() throws Exception {
         // Mocking data
         Employee mockEmployee = new Employee(1L, "Shrief", "Ali", 50000.0, new Department(1L, "IT"));
 
@@ -64,6 +69,19 @@ class  EmployeeControllerTest {
         // Verify that the employeeService.getEmp method was called with the correct ID
         verify(employeeService, times(1)).getEmp(1);
     }
+    @Test
+    void testGetByIDNotFoundUsingAssertThrows() {
+        when(employeeService.getEmp(any(Integer.class))).thenThrow(new EmployeeNotFoundException("Employee not found with this id"));
+
+        // Using assertThrows to assert that NotFoundException is thrown
+        EmployeeNotFoundException exception = assertThrows(EmployeeNotFoundException.class, () -> employeeService.getEmp(1));
+
+        // Assert on the exception message or any other details if needed
+        assertEquals("Employee not found with this id", exception.getMessage());
+
+        verify(employeeService, times(1)).getEmp(1);
+    }
+
 
 
     @Test
@@ -104,7 +122,6 @@ class  EmployeeControllerTest {
         // Mocking the behavior of insert method to return the mockInsertedEmployee when called
         when(employeeService.insert(any(Employee.class))).thenReturn(mockInsertedEmployee);
 
-        // Perform the POST request and validate the response
         mockMvc.perform(post("/empData/insert")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(mockEmployeeToInsert)))
@@ -125,7 +142,6 @@ class  EmployeeControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
-        // Verify that the delete method of EmployeeService was called with the correct ID
         verify(employeeService, times(1)).delete(1);
     }
 
